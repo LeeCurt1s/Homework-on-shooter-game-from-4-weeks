@@ -1,4 +1,3 @@
-HEAD
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -23,4 +22,5 @@ HEAD
 .vsconfig 
 *.csproj 
 *.sln 
-cbc40e2a740ac3e145888f76a8d61681fdb68bb8
+.vs/
+.git/
