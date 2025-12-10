@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
 public class Controller : MonoBehaviour
 {
@@ -13,23 +14,41 @@ public class Controller : MonoBehaviour
 
     private MultiplayerManager _multyplayerManager;
     private bool _hold = false;
+    private bool _hideCursor;
 
     private void Start()
     {
         _multyplayerManager = MultiplayerManager.Instance;
+        _hideCursor = true;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            _hideCursor = !_hideCursor;
+            Cursor.lockState = _hideCursor ? CursorLockMode.Locked : CursorLockMode.None;
+        }
+
         if (_hold) return;
 
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
+        float mouseX = 0;
+        float mouseY = 0;
+        bool isShoot = false;
 
-        bool isShoot = Input.GetMouseButton(0);
+
+        if (_hideCursor)
+        {
+             mouseX = Input.GetAxis("Mouse X");
+             mouseY = Input.GetAxis("Mouse Y");
+
+             isShoot = Input.GetMouseButton(0);
+        }
+
 
         bool space = Input.GetKeyDown(KeyCode.Space);
 
@@ -38,7 +57,7 @@ public class Controller : MonoBehaviour
 
         if (space) _player.Jump();
 
-        if(isShoot && _gun.TryShoot(out ShootInfo shootInfo))
+        if (isShoot && _gun.TryShoot(out ShootInfo shootInfo))
         {
             SendShoot(ref shootInfo);
         }
@@ -93,7 +112,7 @@ public class Controller : MonoBehaviour
 
         _multyplayerManager.SendMessage("move", data);
     }
-    
+
     private IEnumerator Hold()
     {
         _hold = true;
